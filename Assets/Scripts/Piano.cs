@@ -14,7 +14,15 @@ public class Piano : MonoBehaviour
     bool m_IsCustomCord;
     [SerializeField]
     bool m_IsMajor = true;
+    [SerializeField]
+    bool m_ManualCord;
     int m_Count = 0;
+
+    [SerializeField]
+    Keyboard m_MajorChordKey;
+    
+    [SerializeField]
+    Keyboard m_MinorChordKey;
 
     void Start()
     {
@@ -31,15 +39,33 @@ public class Piano : MonoBehaviour
 
         m_Count++;
 
-        if (m_IsCord && !(m_IsCustomCord && m_Count % 3 != 1))
+        if (m_ManualCord)
         {
-            frequencies = m_IsMajor
-                ? new float[] { CalculateFrequency(i), CalculateFrequency(i + 4), CalculateFrequency(i + 7) }
-                : new float[] { CalculateFrequency(i), CalculateFrequency(i + 3), CalculateFrequency(i + 7) };
+            if(m_MajorChordKey.IsPressed)
+            {
+                frequencies = new float[] { CalculateFrequency(i), CalculateFrequency(i + 4), CalculateFrequency(i + 7) };
+            }
+            else if(m_MinorChordKey.IsPressed)
+            {
+                frequencies = new float[] { CalculateFrequency(i), CalculateFrequency(i + 3), CalculateFrequency(i + 7) };
+            }
+            else
+            {
+                frequencies = new float[] { CalculateFrequency(i) };
+            }
         }
         else
         {
-            frequencies = new float[] { CalculateFrequency(i) };
+            if (m_IsCord && !(m_IsCustomCord && m_Count % 3 != 1))
+            {
+                frequencies = m_IsMajor
+                    ? new float[] { CalculateFrequency(i), CalculateFrequency(i + 4), CalculateFrequency(i + 7) }
+                    : new float[] { CalculateFrequency(i), CalculateFrequency(i + 3), CalculateFrequency(i + 7) };
+            }
+            else
+            {
+                frequencies = new float[] { CalculateFrequency(i) };
+            }
         }
 
         GenerateTone(frequencies);
